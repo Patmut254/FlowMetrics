@@ -133,7 +133,7 @@ class UserPreferences(TimeStampedModel):
         LAST_12M = "12m", "Last 12 months"
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="preferences")
-    theme = models.CharField(max_length=10, choices=Theme.choices, default=Theme.SYSTEM)
+    theme = models.CharField(max_length=10, choices=Theme.choices, default=Theme.LIGHT)
     compact_tables = models.BooleanField(default=False)
     default_date_range = models.CharField(
         max_length=4, choices=DefaultRange.choices, default=DefaultRange.LAST_30

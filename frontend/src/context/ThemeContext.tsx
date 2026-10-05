@@ -33,7 +33,7 @@ function readStored(): ThemePreference {
   } catch {
     /* ignore */
   }
-  return "system";
+  return "light";
 }
 
 function readAccent(): Accent {
