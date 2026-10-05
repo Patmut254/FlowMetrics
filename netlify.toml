@@ -1,0 +1,15 @@
+# Netlify deploys only the frontend; the Django API is hosted separately.
+# Set VITE_API_URL in Netlify's environment variables to the API's public URL.
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app: let React Router handle every path (e.g. /customers/42).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
