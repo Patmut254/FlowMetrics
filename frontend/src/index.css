@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Semantic colours are runtime CSS variables so light/dark
+   switch in one place; Tailwind utilities (bg-surface, text-ink, …) read them.
+
+   The accent ("brand") scale is chosen at runtime via <html data-accent="…">
+   (see ThemeContext). Chart series 1 follows the accent; the remaining series
+   are drawn from the fixed CVD-checked set, skipping hues too close to it.
+--------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --canvas: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f9fafb;
+  --surface-3: #f2f4f7;
+  --line: #eaecf0;
+  --line-strong: #d6dae1;
+  --ink: #101828;
+  --ink-2: #475467;
+  --muted: #8a93a3;
+
+  /* Fixed series hues (light). */
+  --c-teal: #0d9488;
+  --c-orange: #eb6834;
+  --c-blue: #2a78d6;
+  --c-yellow: #eda100;
+  --c-violet: #7c3aed;
+  --c-rose: #e11d48;
+  --c-forest: #226b54;
+
+  --chart-grid: #eef0f3;
+  --chart-axis: #98a1b0;
+  --heat-text-strong: #101828;
+}
+
+.dark {
+  color-scheme: dark;
+  --canvas: #0b0c0f;
+  --surface: #14161a;
+  --surface-2: #181b20;
+  --surface-3: #1f2329;
+  --line: #252930;
+  --line-strong: #333842;
+  --ink: #eef0f3;
+  --ink-2: #b2b8c3;
+  --muted: #7c8491;
+
+  --c-teal: #14a394;
+  --c-orange: #d95926;
+  --c-blue: #3987e5;
+  --c-yellow: #c98500;
+  --c-violet: #8b5cf6;
+  --c-rose: #f43f5e;
+  --c-forest: #2f8468;
+
+  --chart-grid: #1f2329;
+  --chart-axis: #6f7785;
+  --heat-text-strong: #0b0c0f;
+}
+
+/* --- Accent palettes ------------------------------------------------------ */
+:root,
+[data-accent="teal"] {
+  --brand-50: #effcf9; --brand-100: #d2f7ee; --brand-200: #a6eedd; --brand-300: #6edcc7; --brand-400: #34c3ad;
+  --brand-500: #14a394; --brand-600: #0d8479; --brand-700: #0f6a62; --brand-800: #11554f; --brand-900: #0b3b36;
+  --chart-1: var(--c-teal); --chart-2: var(--c-orange); --chart-3: var(--c-blue); --chart-4: var(--c-yellow);
+}
+[data-accent="orange"] {
+  --brand-50: #fff7ed; --brand-100: #ffedd5; --brand-200: #fed7aa; --brand-300: #fdba74; --brand-400: #fb923c;
+  --brand-500: #f97316; --brand-600: #ea580c; --brand-700: #c2410c; --brand-800: #9a3412; --brand-900: #7c2d12;
+  --chart-1: var(--c-orange); --chart-2: var(--c-blue); --chart-3: var(--c-teal); --chart-4: var(--c-yellow);
+}
+[data-accent="blue"] {
+  --brand-50: #eff6ff; --brand-100: #dbeafe; --brand-200: #bfdbfe; --brand-300: #93c5fd; --brand-400: #60a5fa;
+  --brand-500: #3b82f6; --brand-600: #2563eb; --brand-700: #1d4ed8; --brand-800: #1e40af; --brand-900: #1e3a8a;
+  --chart-1: var(--c-blue); --chart-2: var(--c-orange); --chart-3: var(--c-teal); --chart-4: var(--c-yellow);
+}
+[data-accent="violet"] {
+  --brand-50: #f5f3ff; --brand-100: #ede9fe; --brand-200: #ddd6fe; --brand-300: #c4b5fd; --brand-400: #a78bfa;
+  --brand-500: #8b5cf6; --brand-600: #7c3aed; --brand-700: #6d28d9; --brand-800: #5b21b6; --brand-900: #4c1d95;
+  --chart-1: var(--c-violet); --chart-2: var(--c-teal); --chart-3: var(--c-orange); --chart-4: var(--c-yellow);
+}
+[data-accent="forest"] {
+  --brand-50: #eef7f3; --brand-100: #d5ece2; --brand-200: #acd8c6; --brand-300: #7bbea4; --brand-400: #4f9f83;
+  --brand-500: #2f8468; --brand-600: #226b54; --brand-700: #1d5746; --brand-800: #19463a; --brand-900: #143a30;
+  --chart-1: var(--c-forest); --chart-2: var(--c-orange); --chart-3: var(--c-blue); --chart-4: var(--c-yellow);
+}
+[data-accent="rose"] {
+  --brand-50: #fff1f2; --brand-100: #ffe4e6; --brand-200: #fecdd3; --brand-300: #fda4af; --brand-400: #fb7185;
+  --brand-500: #f43f5e; --brand-600: #e11d48; --brand-700: #be123c; --brand-800: #9f1239; --brand-900: #881337;
+  --chart-1: var(--c-rose); --chart-2: var(--c-blue); --chart-3: var(--c-teal); --chart-4: var(--c-yellow);
+}
+
+:root {
+  --ring: var(--brand-500);
+  --hero: var(--brand-800);
+  --hero-2: var(--brand-700);
+}
+
+@theme inline {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-hero: var(--hero);
+  --color-hero-2: var(--hero-2);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.03), 0 6px 20px -8px rgb(16 24 40 / 0.08);
+  --shadow-pop: 0 16px 40px -12px rgb(16 24 40 / 0.22), 0 2px 6px rgb(16 24 40 / 0.06);
+
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-slide-up: slide-up 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-canvas text-ink font-sans;
+    font-feature-settings: "cv11", "ss01";
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--chart-1) 25%, transparent);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-pattern {
+    background-color: var(--hero);
+    background-image:
+      radial-gradient(circle at 90% -10%, rgb(255 255 255 / 0.22), transparent 45%),
+      radial-gradient(circle at 0% 120%, color-mix(in oklab, var(--brand-300) 35%, transparent), transparent 45%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M0 60c20 0 20-20 40-20s20 20 40 20 20-20 40-20' fill='none' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='1.5'/%3E%3C/svg%3E"),
+      linear-gradient(135deg, var(--brand-600), var(--brand-900));
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+}
+
+/* Recharts: keep focus outlines off SVG surfaces (keyboard focus is on controls). */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-sector:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Compact table density (Settings → Appearance). Unlayered so it overrides utilities. */
+[data-density="compact"] td {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+@media print {
+  aside,
+  header {
+    display: none !important;
+  }
+  .lg\:pl-\[17rem\] {
+    padding-left: 0 !important;
+  }
+}
