@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, SearchX, Users } from "lucide-react";
-import { CHANNEL_OPTIONS, CustomerFormModal } from "@/components/CustomerFormModal";
+import {
+  CHANNEL_OPTIONS,
+  CustomerFormModal,
+} from "@/components/CustomerFormModal";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Avatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/ui/Badge";
@@ -27,11 +30,17 @@ const PAGE_SIZE = 12;
 
 export function CustomersPage() {
   const navigate = useNavigate();
-  const { values, set, page } = useListParams(["search", "status", "plan", "channel"] as const, { ordering: "-joined_at" });
+  const { values, set, page } = useListParams(
+    ["search", "status", "plan", "channel"] as const,
+    { ordering: "-joined_at" },
+  );
   const [creating, setCreating] = useState(false);
   const plans = usePlans();
 
-  const summary = useApi<Record<string, number>>((signal) => api.get("/customers/summary/", undefined, signal), []);
+  const summary = useApi<Record<string, number>>(
+    (signal) => api.get("/customers/summary/", undefined, signal),
+    [],
+  );
   const { data, error, loading, refetch } = useApi<Paginated<Customer>>(
     (signal) =>
       api.get(
@@ -47,10 +56,19 @@ export function CustomersPage() {
         },
         signal,
       ),
-    [values.search, values.status, values.plan, values.channel, values.ordering, page],
+    [
+      values.search,
+      values.status,
+      values.plan,
+      values.channel,
+      values.ordering,
+      page,
+    ],
   );
 
-  const filtersActive = Boolean(values.search || values.status || values.plan || values.channel);
+  const filtersActive = Boolean(
+    values.search || values.status || values.plan || values.channel,
+  );
   const counts = summary.data;
 
   return (
@@ -59,7 +77,10 @@ export function CustomersPage() {
         title="Customers"
         description="Every company subscribed to your product, with plan, revenue and lifecycle status."
         actions={
-          <Button icon={<Plus className="size-4" />} onClick={() => setCreating(true)}>
+          <Button
+            icon={<Plus className="size-4" />}
+            onClick={() => setCreating(true)}
+          >
             Add customer
           </Button>
         }
@@ -92,13 +113,22 @@ export function CustomersPage() {
               label="Filter by plan"
               value={values.plan}
               onChange={(plan) => set({ plan })}
-              options={[{ value: "", label: "All plans" }, ...(plans.data ?? []).map((p) => ({ value: p.slug, label: p.name }))]}
+              options={[
+                { value: "", label: "All plans" },
+                ...(plans.data ?? []).map((p) => ({
+                  value: p.slug,
+                  label: p.name,
+                })),
+              ]}
             />
             <FilterSelect
               label="Filter by channel"
               value={values.channel}
               onChange={(channel) => set({ channel })}
-              options={[{ value: "", label: "All channels" }, ...CHANNEL_OPTIONS]}
+              options={[
+                { value: "", label: "All channels" },
+                ...CHANNEL_OPTIONS,
+              ]}
             />
           </div>
         </div>
@@ -114,7 +144,12 @@ export function CustomersPage() {
               title="No customers match your filters"
               description="Try a different search term or clear the filters."
               action={
-                <Button variant="secondary" onClick={() => set({ search: "", status: "", plan: "", channel: "" })}>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    set({ search: "", status: "", plan: "", channel: "" })
+                  }
+                >
                   Clear filters
                 </Button>
               }
@@ -124,7 +159,9 @@ export function CustomersPage() {
               icon={<Users className="size-6" />}
               title="No customers yet"
               description="Add your first customer to start tracking subscriptions and revenue."
-              action={<Button onClick={() => setCreating(true)}>Add customer</Button>}
+              action={
+                <Button onClick={() => setCreating(true)}>Add customer</Button>
+              }
             />
           )
         ) : (
@@ -132,13 +169,35 @@ export function CustomersPage() {
             <Table>
               <thead>
                 <tr>
-                  <SortTh label="Customer" field="company_name" ordering={values.ordering} onSort={(ordering) => set({ ordering })} />
+                  <SortTh
+                    label="Customer"
+                    field="company_name"
+                    ordering={values.ordering}
+                    onSort={(ordering) => set({ ordering })}
+                  />
                   <Th>Status</Th>
                   <Th>Plan</Th>
-                  <SortTh label="MRR" field="mrr" align="right" ordering={values.ordering} onSort={(ordering) => set({ ordering })} />
-                  <SortTh label="Lifetime revenue" field="lifetime_revenue" align="right" ordering={values.ordering} onSort={(ordering) => set({ ordering })} />
+                  <SortTh
+                    label="MRR"
+                    field="mrr"
+                    align="right"
+                    ordering={values.ordering}
+                    onSort={(ordering) => set({ ordering })}
+                  />
+                  <SortTh
+                    label="Lifetime revenue"
+                    field="lifetime_revenue"
+                    align="right"
+                    ordering={values.ordering}
+                    onSort={(ordering) => set({ ordering })}
+                  />
                   <Th>Channel</Th>
-                  <SortTh label="Joined" field="joined_at" ordering={values.ordering} onSort={(ordering) => set({ ordering })} />
+                  <SortTh
+                    label="Joined"
+                    field="joined_at"
+                    ordering={values.ordering}
+                    onSort={(ordering) => set({ ordering })}
+                  />
                 </tr>
               </thead>
               <tbody>
@@ -168,11 +227,25 @@ export function CustomersPage() {
                     <Td>
                       <StatusBadge status={customer.status} />
                     </Td>
-                    <Td className="text-ink">{customer.current_plan ?? <span className="text-muted">—</span>}</Td>
-                    <Td className="text-right font-semibold text-ink tabular">{formatCurrency(customer.mrr)}</Td>
-                    <Td className="text-right text-ink-2 tabular">{formatCurrency(customer.lifetime_revenue, { cents: false })}</Td>
-                    <Td className="whitespace-nowrap text-ink-2">{humanize(customer.channel)}</Td>
-                    <Td className="whitespace-nowrap text-ink-2">{formatDate(customer.joined_at)}</Td>
+                    <Td className="text-ink">
+                      {customer.current_plan ?? (
+                        <span className="text-muted">-</span>
+                      )}
+                    </Td>
+                    <Td className="text-right font-semibold text-ink tabular">
+                      {formatCurrency(customer.mrr)}
+                    </Td>
+                    <Td className="text-right text-ink-2 tabular">
+                      {formatCurrency(customer.lifetime_revenue, {
+                        cents: false,
+                      })}
+                    </Td>
+                    <Td className="whitespace-nowrap text-ink-2">
+                      {humanize(customer.channel)}
+                    </Td>
+                    <Td className="whitespace-nowrap text-ink-2">
+                      {formatDate(customer.joined_at)}
+                    </Td>
                   </tr>
                 ))}
               </tbody>

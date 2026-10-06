@@ -11,11 +11,22 @@ interface DeltaProps {
 }
 
 /** Period-over-period change. Direction is shown by an arrow and sign, not colour alone. */
-export function Delta({ value, inverse = false, onDark = false, className }: DeltaProps) {
+export function Delta({
+  value,
+  inverse = false,
+  onDark = false,
+  className,
+}: DeltaProps) {
   if (value === null || value === undefined || Number.isNaN(value)) {
     return (
-      <span className={cn("inline-flex items-center text-xs font-semibold", onDark ? "text-white/60" : "text-muted", className)}>
-        —
+      <span
+        className={cn(
+          "inline-flex items-center text-xs font-semibold",
+          onDark ? "text-white/60" : "text-muted",
+          className,
+        )}
+      >
+        -
       </span>
     );
   }
@@ -34,7 +45,13 @@ export function Delta({ value, inverse = false, onDark = false, className }: Del
         ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"
         : "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-300";
   return (
-    <span className={cn("inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-xs font-semibold tabular", tone, className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-xs font-semibold tabular",
+        tone,
+        className,
+      )}
+    >
       <Icon className="size-3.5" aria-hidden />
       {formatChange(value)}
     </span>

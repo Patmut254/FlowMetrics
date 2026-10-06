@@ -2,7 +2,7 @@
 The FlowMetrics metrics engine.
 
 Every number on the dashboard is derived here from raw subscriptions,
-customers and transactions — nothing is hard-coded. Subscriptions for a
+customers and transactions - nothing is hard-coded. Subscriptions for a
 workspace are loaded once into memory (a few thousand rows at most) so that
 point-in-time metrics like MRR can be evaluated for many dates cheaply.
 

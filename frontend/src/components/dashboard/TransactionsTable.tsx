@@ -32,25 +32,44 @@ export function TransactionsTable({
           <tr key={txn.id} className="hover:bg-surface-2">
             {showCustomer && (
               <Td>
-                <Link to={`/customers/${txn.customer.id}`} className="flex items-center gap-3 rounded-md">
+                <Link
+                  to={`/customers/${txn.customer.id}`}
+                  className="flex items-center gap-3 rounded-md"
+                >
                   <Avatar name={txn.customer.company_name} size="sm" />
                   <span className="min-w-0">
-                    <span className="block truncate font-semibold text-ink hover:underline">{txn.customer.company_name}</span>
-                    <span className="block truncate text-xs text-muted">{txn.customer.email}</span>
+                    <span className="block truncate font-semibold text-ink hover:underline">
+                      {txn.customer.company_name}
+                    </span>
+                    <span className="block truncate text-xs text-muted">
+                      {txn.customer.email}
+                    </span>
                   </span>
                 </Link>
               </Td>
             )}
-            {showReference && <Td className="font-mono text-xs whitespace-nowrap text-ink-2">{txn.reference}</Td>}
+            {showReference && (
+              <Td className="font-mono text-xs whitespace-nowrap text-ink-2">
+                {txn.reference}
+              </Td>
+            )}
             <Td>
-              <span className="text-ink">{txn.plan ?? "—"}</span>
-              {txn.billing_cycle && <span className="block text-xs text-muted">{humanize(txn.billing_cycle)}</span>}
+              <span className="text-ink">{txn.plan ?? "-"}</span>
+              {txn.billing_cycle && (
+                <span className="block text-xs text-muted">
+                  {humanize(txn.billing_cycle)}
+                </span>
+              )}
             </Td>
-            <Td className="whitespace-nowrap text-ink-2">{formatDate(txn.occurred_at)}</Td>
+            <Td className="whitespace-nowrap text-ink-2">
+              {formatDate(txn.occurred_at)}
+            </Td>
             <Td>
               <StatusBadge status={txn.status} />
             </Td>
-            <Td className="text-right font-semibold text-ink tabular">{formatCurrency(txn.amount)}</Td>
+            <Td className="text-right font-semibold text-ink tabular">
+              {formatCurrency(txn.amount)}
+            </Td>
           </tr>
         ))}
       </tbody>

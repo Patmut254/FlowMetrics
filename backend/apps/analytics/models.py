@@ -8,8 +8,8 @@ class MetricSnapshot(TimeStampedModel):
     """
     A persisted month-end record of the workspace's key metrics.
 
-    Snapshots are *derived* — they are recomputed from subscriptions and
-    transactions by `analytics.services.refresh_snapshots` — and give reports
+    Snapshots are *derived* - they are recomputed from subscriptions and
+    transactions by `analytics.services.refresh_snapshots` - and give reports
     a stable historical record that does not drift when source data changes.
     """
 

@@ -4,7 +4,7 @@ Seed a realistic demo workspace.
 Simulates ~24 months of a growing B2B SaaS business: customers sign up through
 different channels, run trials, convert (or not), pay monthly or annually,
 upgrade, fail payments and churn. All dashboard metrics are later derived
-from these rows — nothing is pre-aggregated except month-end snapshots.
+from these rows - nothing is pre-aggregated except month-end snapshots.
 
     python manage.py seed_demo            # create the demo workspace
     python manage.py seed_demo --reset    # wipe and recreate it
@@ -396,10 +396,10 @@ class Command(BaseCommand):
         quarter = self.last_quarter()
         quarter_name = f"Q{(quarter.start.month - 1) // 3 + 1} {quarter.start.year}"
         definitions = [
-            ("Executive summary — last 12 months", "executive",
+            ("Executive summary - last 12 months", "executive",
              DateRange(add_months(this_month, -12), this_month - timedelta(days=1))),
             (f"{quarter_name} revenue review", "revenue", quarter),
-            ("Customer health — last 90 days", "customers",
+            ("Customer health - last 90 days", "customers",
              DateRange(self.today - timedelta(days=89), self.today)),
         ]
         for name, kind, rng in definitions:

@@ -1,4 +1,6 @@
-const BASE_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
+const BASE_URL = (
+  import.meta.env.VITE_API_URL ?? "http://localhost:8000/api"
+).replace(/\/$/, "");
 const TOKEN_KEY = "fm-token";
 
 export type FieldErrors = Record<string, string[]>;
@@ -32,7 +34,7 @@ export const tokenStore = {
     try {
       localStorage.setItem(TOKEN_KEY, token);
     } catch {
-      /* storage unavailable — session will not persist */
+      /* storage unavailable - session will not persist */
     }
   },
   clear() {
@@ -49,12 +51,16 @@ export function onUnauthorized(handler: () => void) {
   unauthorizedHandler = handler;
 }
 
-export type QueryParams = Record<string, string | number | boolean | null | undefined>;
+export type QueryParams = Record<
+  string,
+  string | number | boolean | null | undefined
+>;
 
 function buildUrl(path: string, params?: QueryParams): string {
   const url = new URL(`${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
   Object.entries(params ?? {}).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") url.searchParams.set(key, String(value));
+    if (value !== undefined && value !== null && value !== "")
+      url.searchParams.set(key, String(value));
   });
   return url.toString();
 }
@@ -66,7 +72,10 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
-async function send(path: string, { method = "GET", body, params, signal }: RequestOptions): Promise<Response> {
+async function send(
+  path: string,
+  { method = "GET", body, params, signal }: RequestOptions,
+): Promise<Response> {
   const headers: Record<string, string> = { Accept: "application/json" };
   const token = tokenStore.get();
   if (token) headers.Authorization = `Token ${token}`;
@@ -82,7 +91,10 @@ async function send(path: string, { method = "GET", body, params, signal }: Requ
     });
   } catch (error) {
     if ((error as Error).name === "AbortError") throw error;
-    throw new ApiError("Can't reach the FlowMetrics server. Check your connection and try again.", 0);
+    throw new ApiError(
+      "Can't reach the FlowMetrics server. Check your connection and try again.",
+      0,
+    );
   }
 
   if (response.status === 401 && token) {
@@ -105,7 +117,10 @@ async function send(path: string, { method = "GET", body, params, signal }: Requ
   return response;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
   const response = await send(path, options);
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
@@ -114,12 +129,19 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 export const api = {
   get: <T>(path: string, params?: QueryParams, signal?: AbortSignal) =>
     request<T>(path, { params, signal }),
-  post: <T>(path: string, body?: unknown) => request<T>(path, { method: "POST", body: body ?? {} }),
-  patch: <T>(path: string, body: unknown) => request<T>(path, { method: "PATCH", body }),
-  delete: <T = void>(path: string, body?: unknown) => request<T>(path, { method: "DELETE", body }),
+  post: <T>(path: string, body?: unknown) =>
+    request<T>(path, { method: "POST", body: body ?? {} }),
+  patch: <T>(path: string, body: unknown) =>
+    request<T>(path, { method: "PATCH", body }),
+  delete: <T = void>(path: string, body?: unknown) =>
+    request<T>(path, { method: "DELETE", body }),
 
   /** Download a file (e.g. CSV export) using the auth token. */
-  async download(path: string, params: QueryParams | undefined, filename: string) {
+  async download(
+    path: string,
+    params: QueryParams | undefined,
+    filename: string,
+  ) {
     const response = await send(path, { params });
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);

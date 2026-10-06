@@ -9,16 +9,26 @@ import { AuthLayout } from "./AuthLayout";
 
 type Errors = Partial<Record<keyof RegisterPayload | "form", string>>;
 
-const EMPTY: RegisterPayload = { first_name: "", last_name: "", email: "", password: "", organization_name: "" };
+const EMPTY: RegisterPayload = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  password: "",
+  organization_name: "",
+};
 
 function validate(values: RegisterPayload): Errors {
   const errors: Errors = {};
   if (!values.first_name.trim()) errors.first_name = "First name is required.";
   if (!values.last_name.trim()) errors.last_name = "Last name is required.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) errors.email = "Enter a valid email address.";
-  if (values.password.length < 8) errors.password = "Use at least 8 characters.";
-  else if (/^\d+$/.test(values.password)) errors.password = "Password can't be entirely numeric.";
-  if (values.organization_name.trim().length < 2) errors.organization_name = "Workspace name must be at least 2 characters.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim()))
+    errors.email = "Enter a valid email address.";
+  if (values.password.length < 8)
+    errors.password = "Use at least 8 characters.";
+  else if (/^\d+$/.test(values.password))
+    errors.password = "Password can't be entirely numeric.";
+  if (values.organization_name.trim().length < 2)
+    errors.organization_name = "Workspace name must be at least 2 characters.";
   return errors;
 }
 
@@ -39,10 +49,12 @@ export function RegisterPage() {
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
 
-  const set = (key: keyof RegisterPayload) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues((v) => ({ ...v, [key]: event.target.value }));
-    if (errors[key]) setErrors((e) => ({ ...e, [key]: undefined }));
-  };
+  const set =
+    (key: keyof RegisterPayload) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValues((v) => ({ ...v, [key]: event.target.value }));
+      if (errors[key]) setErrors((e) => ({ ...e, [key]: undefined }));
+    };
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -53,7 +65,10 @@ export function RegisterPage() {
     setSubmitting(true);
     try {
       await register({ ...values, email: values.email.trim() });
-      toast.success("Workspace created", `Welcome to FlowMetrics, ${values.first_name}.`);
+      toast.success(
+        "Workspace created",
+        `Welcome to FlowMetrics, ${values.first_name}.`,
+      );
       navigate("/", { replace: true });
     } catch (error) {
       const err = error as ApiError;
@@ -79,7 +94,10 @@ export function RegisterPage() {
       subtitle={
         <>
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-brand-700 hover:underline dark:text-brand-300">
+          <Link
+            to="/login"
+            className="font-semibold text-brand-700 hover:underline dark:text-brand-300"
+          >
             Sign in
           </Link>
         </>
@@ -87,15 +105,38 @@ export function RegisterPage() {
     >
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         {errors.form && (
-          <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
+          >
             {errors.form}
           </div>
         )}
         <div className="grid grid-cols-2 gap-3">
-          <Input label="First name" autoComplete="given-name" value={values.first_name} onChange={set("first_name")} error={errors.first_name} />
-          <Input label="Last name" autoComplete="family-name" value={values.last_name} onChange={set("last_name")} error={errors.last_name} />
+          <Input
+            label="First name"
+            autoComplete="given-name"
+            value={values.first_name}
+            onChange={set("first_name")}
+            error={errors.first_name}
+          />
+          <Input
+            label="Last name"
+            autoComplete="family-name"
+            value={values.last_name}
+            onChange={set("last_name")}
+            error={errors.last_name}
+          />
         </div>
-        <Input label="Work email" type="email" autoComplete="email" placeholder="you@company.com" value={values.email} onChange={set("email")} error={errors.email} />
+        <Input
+          label="Work email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@company.com"
+          value={values.email}
+          onChange={set("email")}
+          error={errors.email}
+        />
         <Input
           label="Workspace name"
           placeholder="e.g. Acme Analytics"
@@ -105,7 +146,14 @@ export function RegisterPage() {
           error={errors.organization_name}
         />
         <div>
-          <Input label="Password" type="password" autoComplete="new-password" value={values.password} onChange={set("password")} error={errors.password} />
+          <Input
+            label="Password"
+            type="password"
+            autoComplete="new-password"
+            value={values.password}
+            onChange={set("password")}
+            error={errors.password}
+          />
           {values.password && !errors.password && (
             <div className="mt-2 flex items-center gap-2" aria-live="polite">
               <div className="flex flex-1 gap-1" aria-hidden>
@@ -116,14 +164,23 @@ export function RegisterPage() {
                   />
                 ))}
               </div>
-              <span className="text-xs font-medium text-muted">{labels[score]}</span>
+              <span className="text-xs font-medium text-muted">
+                {labels[score]}
+              </span>
             </div>
           )}
         </div>
-        <Button type="submit" loading={submitting} className="w-full justify-center">
+        <Button
+          type="submit"
+          loading={submitting}
+          className="w-full justify-center"
+        >
           Create workspace
         </Button>
-        <p className="text-center text-xs text-muted">Your workspace starts empty — add customers and plans to see live metrics.</p>
+        <p className="text-center text-xs text-muted">
+          Your workspace starts empty - add customers and plans to see live
+          metrics.
+        </p>
       </form>
     </AuthLayout>
   );

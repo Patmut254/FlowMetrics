@@ -6,9 +6,13 @@ export function setCurrency(code: string) {
   currency = code;
 }
 
-const toNumber = (value: number | string | null | undefined) => Number(value ?? 0) || 0;
+const toNumber = (value: number | string | null | undefined) =>
+  Number(value ?? 0) || 0;
 
-export function formatCurrency(value: number | string | null | undefined, options: { compact?: boolean; cents?: boolean } = {}) {
+export function formatCurrency(
+  value: number | string | null | undefined,
+  options: { compact?: boolean; cents?: boolean } = {},
+) {
   const amount = toNumber(value);
   const { compact = false, cents = !compact } = options;
   return new Intl.NumberFormat("en-US", {
@@ -16,11 +20,15 @@ export function formatCurrency(value: number | string | null | undefined, option
     currency,
     notation: compact && Math.abs(amount) >= 10_000 ? "compact" : "standard",
     minimumFractionDigits: cents ? 2 : 0,
-    maximumFractionDigits: compact && Math.abs(amount) >= 10_000 ? 1 : cents ? 2 : 0,
+    maximumFractionDigits:
+      compact && Math.abs(amount) >= 10_000 ? 1 : cents ? 2 : 0,
   }).format(amount);
 }
 
-export function formatNumber(value: number | string | null | undefined, compact = false) {
+export function formatNumber(
+  value: number | string | null | undefined,
+  compact = false,
+) {
   const amount = toNumber(value);
   return new Intl.NumberFormat("en-US", {
     notation: compact && Math.abs(amount) >= 10_000 ? "compact" : "standard",
@@ -28,19 +36,25 @@ export function formatNumber(value: number | string | null | undefined, compact 
   }).format(amount);
 }
 
-export function formatPercent(value: number | string | null | undefined, digits = 1) {
-  if (value === null || value === undefined) return "—";
+export function formatPercent(
+  value: number | string | null | undefined,
+  digits = 1,
+) {
+  if (value === null || value === undefined) return "-";
   return `${toNumber(value).toFixed(digits)}%`;
 }
 
 export function formatChange(value: number | null | undefined) {
-  if (value === null || value === undefined) return "—";
+  if (value === null || value === undefined) return "-";
   const sign = value > 0 ? "+" : "";
   return `${sign}${value.toFixed(1)}%`;
 }
 
-export function formatValue(value: number | string | null | undefined, format: ValueFormat): string {
-  if (value === null || value === undefined) return "—";
+export function formatValue(
+  value: number | string | null | undefined,
+  format: ValueFormat,
+): string {
+  if (value === null || value === undefined) return "-";
   switch (format) {
     case "currency":
       return formatCurrency(value);
@@ -63,26 +77,59 @@ export function parseDate(value: string): Date {
   return new Date(y, (m ?? 1) - 1, d ?? 1);
 }
 
-export function formatDate(value: string | null | undefined, style: "short" | "medium" = "medium") {
-  if (!value) return "—";
+export function formatDate(
+  value: string | null | undefined,
+  style: "short" | "medium" = "medium",
+) {
+  if (!value) return "-";
   const date = value.length > 10 ? new Date(value) : parseDate(value);
-  return date.toLocaleDateString("en-US", style === "short" ? { month: "short", day: "numeric" } : { month: "short", day: "numeric", year: "numeric" });
+  return date.toLocaleDateString(
+    "en-US",
+    style === "short"
+      ? { month: "short", day: "numeric" }
+      : { month: "short", day: "numeric", year: "numeric" },
+  );
 }
 
 export function formatDateTime(value: string) {
-  return new Date(value).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+  return new Date(value).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 export function formatMonth(value: string, short = false) {
-  return parseDate(value).toLocaleDateString("en-US", { month: short ? "short" : "long", year: short ? "2-digit" : "numeric" });
+  return parseDate(value).toLocaleDateString("en-US", {
+    month: short ? "short" : "long",
+    year: short ? "2-digit" : "numeric",
+  });
 }
 
 /** Axis / tooltip label for a series bucket. */
-export function formatBucket(value: string, granularity: Granularity, long = false) {
+export function formatBucket(
+  value: string,
+  granularity: Granularity,
+  long = false,
+) {
   const date = parseDate(value);
-  if (granularity === "month") return date.toLocaleDateString("en-US", long ? { month: "long", year: "numeric" } : { month: "short", year: "2-digit" });
-  if (granularity === "week" && long) return `Week of ${date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
-  return date.toLocaleDateString("en-US", long ? { weekday: "short", month: "short", day: "numeric" } : { month: "short", day: "numeric" });
+  if (granularity === "month")
+    return date.toLocaleDateString(
+      "en-US",
+      long
+        ? { month: "long", year: "numeric" }
+        : { month: "short", year: "2-digit" },
+    );
+  if (granularity === "week" && long)
+    return `Week of ${date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+  return date.toLocaleDateString(
+    "en-US",
+    long
+      ? { weekday: "short", month: "short", day: "numeric" }
+      : { month: "short", day: "numeric" },
+  );
 }
 
 export function relativeDay(value: string) {

@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { api, onUnauthorized, tokenStore } from "@/lib/api";
 import { setCurrency } from "@/lib/format";
 import type { AuthResponse, User } from "@/types";
@@ -25,7 +33,9 @@ const AuthContext = createContext<AuthState | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<User | null>(null);
-  const [initializing, setInitializing] = useState(() => Boolean(tokenStore.get()));
+  const [initializing, setInitializing] = useState(() =>
+    Boolean(tokenStore.get()),
+  );
 
   const setUser = useCallback((next: User) => {
     setCurrency(next.organization?.currency ?? "USD");
@@ -53,7 +63,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      setSession(await api.post<AuthResponse>("/auth/login/", { email, password }));
+      setSession(
+        await api.post<AuthResponse>("/auth/login/", { email, password }),
+      );
     },
     [setSession],
   );
@@ -69,14 +81,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api.post("/auth/logout/");
     } catch {
-      /* token may already be invalid — sign out locally regardless */
+      /* token may already be invalid - sign out locally regardless */
     }
     tokenStore.clear();
     setUserState(null);
   }, []);
 
   const value = useMemo(
-    () => ({ user, initializing, login, register, logout, setUser, setSession }),
+    () => ({
+      user,
+      initializing,
+      login,
+      register,
+      logout,
+      setUser,
+      setSession,
+    }),
     [user, initializing, login, register, logout, setUser, setSession],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
